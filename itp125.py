@@ -4,7 +4,7 @@ import datetime   #used to timestamp findings of passwords
 
 # this is our alphabet. It includes all upper and lowercase english letters, 
 # as well as all base10 digits, and a good amount of special characters. 
-alphabet = "abcdefghijklmnopqrstuvqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()-_"
+alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()-_"
 
 # This function is utilized to generate all possible 
 # combinations of characters of a given length (len), 
