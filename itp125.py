@@ -1,6 +1,23 @@
 import hashlib    #used to generate md5 hashes
 import itertools  #used to generate all possible passwords of a given alphabet 
 import datetime   #used to timestamp findings of passwords
+import os
+
+#unnecessary. Just for a bit of added flair. 
+ascii_art = '''
+--------------------------------------------------------
+
+    __  __           __    __                           
+   / / / /___ ______/ /_  / /_  __  ______  ____  __  __
+  / /_/ / __ `/ ___/ __ \/ __ \/ / / / __ \/ __ \/ / / /
+ / __  / /_/ (__  ) / / / /_/ / /_/ / / / / / / / /_/ / 
+/_/ /_/\__,_/____/_/ /_/_.___/\__,_/_/ /_/_/ /_/\__, /  
+                                               /____/   
+
+ -------------------------------------------------------
+          Created by Arek Ouzounian for ITP125
+
+'''
 
 # this is our alphabet. It includes all upper and lowercase english letters, 
 # as well as all base10 digits, and a good amount of special characters. 
@@ -20,10 +37,13 @@ def hash(in_str):
 # This function combines the functionality of the previous two functions 
 # and fully completes the process of bruteforcing. 
 def main():
+    os.system("clear")
+    print(ascii_art) # just for fun
+
     # We begin by timestamping the process so that further 
     # password cracking has a chronological frame of reference.
     start = datetime.datetime.now()
-    print("Started at ", start)
+    print("Cracking started at ", start)
 
     # Here, we grab the hashes from our file and dump them 
     # into a list object. 
@@ -45,7 +65,7 @@ def main():
     # I would likely use a hard-coded range anyway. 
     for pass_len in range(1, 9):
         if not isDone:
-            print(pass_len, "characters reached.")
+            print("Started cracking", pass_len, "character passwords.")
             # looping through each individual password of length pass_len, as 
             # given by the cartesianProduct function 
             for pword in cartesianProduct(pass_len):
@@ -61,7 +81,9 @@ def main():
                 strX = ''.join(pword)
                 hsh = hash(strX)
                 if hsh in hashes:
-                    print(hsh + " | Decoded: " + strX + " | Process completed in ", datetime.datetime.now() - start)
+                    print("Hash:", hsh + " | Decoded: " + strX + " | Process completed in ", datetime.datetime.now() - start, "\n")
                     hashes.pop(hsh)  
+    
+    print('\n\nCongratulations! All passwords have been cracked. It took a grand total of: ' + datetime.datetime.now() - start)
 
 main()
