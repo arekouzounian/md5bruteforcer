@@ -1,21 +1,42 @@
 import hashlib    #used to generate md5 hashes
 import itertools  #used to generate all possible passwords of a given alphabet 
 import datetime   #used to timestamp findings of passwords
+import threading 
 
 # this is our alphabet. It includes all upper and lowercase english letters, 
 # as well as all base10 digits, and a good amount of special characters. 
-alphabet = "abcdefghijklmnopqrstuvqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()-_"
+alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()-_"
+
+hashes = {}
 
 # This function is utilized to generate all possible 
 # combinations of characters of a given length (len), 
 # within the given alphabet (in_str)
-def cartesianProduct(in_str, len):
+def cartesianProduct(len):
     yield from itertools.product(alphabet, repeat=len)
 
 # This function takes in a string (in_str), and 
 # returns the MD5 hash equivalent of that string. 
 def hash(in_str):
     return hashlib.md5(in_str.encode()).hexdigest()
+
+def printComplete(hsh, pword, start_time):
+    print(hsh + " | Decoded: " + pword + " | Process completed in ", datetime.datetime.now() - start_time)
+
+def charThread(given_char, start_time):
+    hsh = hash(given_char)
+    if hsh in hashes:
+        printComplete(hsh, given_char, start_time)
+    for pass_len in range(2, 9):
+        for pword in cartesianProduct(pass_len-1):
+            pword = given_char.join(pword)
+            hsh = hash(pword)
+            if hsh in hashes:
+                printComplete(hsh, pword, start_time)
+                hashes.pop(hsh)  
+
+
+
 
 # This function combines the functionality of the previous two functions 
 # and fully completes the process of bruteforcing. 
@@ -27,7 +48,7 @@ def main():
 
     # Here, we grab the hashes from our file and dump them 
     # into a list object. 
-    hashes = {}
+    global hashes
     with open("hashes.txt") as f:
         for line in f.readlines():
             hashes.update({line.strip(): ""})
@@ -35,6 +56,14 @@ def main():
     # Here is the core loop. isDone is utilized to avoid 
     # extra work towards the end of cracking. 
     isDone = False
+    
+    threads = [None] * len(alphabet)
+    for i in range(len(threads)):
+        threads[i] = threading.Thread(target=charThread, args=(alphabet[i], start))
+        threads[i].start()
+
+    for i in range(len(threads)):
+        threads[i].join()
     # Looping through passwords of length 1 through 9
     # I could have made this an infinite loop, just increasingly
     # incrementing for larger and larger password sizes until
@@ -43,12 +72,15 @@ def main():
     # lengths. Realistically speaking, most passwords fall between
     # 4 and 16 characters, so if this were to be applied to actual hashes, 
     # I would likely use a hard-coded range anyway. 
+    '''
     for pass_len in range(1, 9):
         if not isDone:
             print(pass_len, "characters reached.")
             # looping through each individual password of length pass_len, as 
             # given by the cartesianProduct function 
-            for pword in cartesianProduct(alphabet, pass_len):
+
+
+            for pword in cartesianProduct(pass_len):
                 #Escape case for end of hashing
                 if len(hashes) < 1:
                     isDone = True
@@ -63,5 +95,6 @@ def main():
                 if hsh in hashes:
                     print(hsh + " | Decoded: " + strX + " | Process completed in ", datetime.datetime.now() - start)
                     hashes.pop(hsh)  
+    '''
 
 main()
