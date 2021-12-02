@@ -9,7 +9,7 @@ alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^
 # This function is utilized to generate all possible 
 # combinations of characters of a given length (len), 
 # within the given alphabet (in_str)
-def cartesianProduct(in_str, len):
+def cartesianProduct(len):
     yield from itertools.product(alphabet, repeat=len)
 
 # This function takes in a string (in_str), and 
