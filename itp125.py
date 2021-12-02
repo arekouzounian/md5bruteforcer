@@ -48,7 +48,7 @@ def main():
             print(pass_len, "characters reached.")
             # looping through each individual password of length pass_len, as 
             # given by the cartesianProduct function 
-            for pword in cartesianProduct(alphabet, pass_len):
+            for pword in cartesianProduct(pass_len):
                 #Escape case for end of hashing
                 if len(hashes) < 1:
                     isDone = True
